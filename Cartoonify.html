@@ -1,0 +1,228 @@
+<!-- 1.2.1 FRONT-END -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-3.5.1.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Libre+Baskerville&family=Sora:wght@700&family=Ubuntu:ital, wght@1,500&display-swap" rel="stylesheet">
+<title>Home</title>
+</head>
+<body>
+<h2 align="center">Cartoofying an Image</h2><br>
+<form method="POST" action="http://127.0.0.1:5000/" enctype="multipart/form-data"> <div class="cont">
+<div id="userActions">
+<br><br><br><br><br><br>
+<p>Drag &amp; Drop Image</p>
+<input type="file" id="fileUpload" name="fileupload"/>
+</div>
+<div style="margin-left: 13%;">
+<label for="filters" style="color: white"; > <b>Select a filter:</b></label>
+<select id="filter" name="filter">
+<option value="1">Gray Scale</option>
+<option value="2">Sharpened Gray Scale</option>
+<!-- <option value="3">Sketchy</option> -->
+<option value="4">UV Filter</option>
+<option value="5">Water Colored</option>
+</select>
+<input type="submit" value="Cartoonify" style="margin-left: 18%; font-weight:bolder; font-size: large; "> </div>
+<div></div> 
+<br>
+
+<!-- // 1 -->
+
+<div id="cimage">
+</div>
+<div id="em1" name="em1"></div> <!-- <div></div> -->
+</div>
+</form>
+</body>
+
+<div id="oimage">
+</div>
+<div id="em" name="em1"></div> <!-- <div></div> -->
+</div>
+</form>
+</body>
+
+<div id="acimage">
+</div>
+<div id="em1" name="em1"></div> <!-- <div></div> -->
+</div>
+</form>
+</body>
+
+<style>
+    *{ margin: 0; padding: 0; }
+
+    body{
+    background-color: #37474F;
+    font-family: Arial, sans-serif;
+    padding: 15px;
+}
+
+h2{
+margin: 1% 8%;
+color: #FFFFFF;
+}
+
+.error{ color: #B71C1C; }
+
+#userActions{
+    display: table-cell;
+height: 55vh;
+width: 90%;
+vertical-align: middle;
+text-align: center;
+color: #37474F;
+background-color: #FFFFFF;
+border: solid 2px #333333; 
+border-radius: 10px;
+}
+
+/*.formclass{
+position: relative;
+}*/
+/* #cimage{
+margin-top: 350px;
+} */
+.cont{
+display: grid;
+grid-template-columns: 50% 50%;
+}
+
+#userActions input{
+    width: 80%;
+    margin-left: 30%;
+}
+#emtn{
+    font-weight: bolder;
+font-size: larger;
+margin-top: 190px;
+margin-left: 25%;
+color: white;
+text-align: center;
+}
+
+
+#imgPrime{
+    width: 95%;
+height: 95%;
+/*position: relative;
+margin-bottom: 85%;
+margin-left: 0%;
+display: none;*/
+}
+
+button{
+margin-top: 10px;
+margin-left: 44%;
+padding: 3px;
+border-radius: 5px;
+background-color: rgb(177, 247, 212); color: rgb(13,
+13, 14);
+font-size: large;
+font-weight: 600;
+}
+.signupbtn:hover{
+font-size: larger;
+border-radius: 12%;
+}
+</style>
+<script>
+
+'use strict';
+
+$(document).ready(function() {
+    console.log("Hi");
+    console.log(jQuery(this).attr('action'))
+    jQuery("form").on("submit", function(e) {
+        console.log("Hi");
+        console.log(jQuery(this).attr('action'))
+        e.preventDefault();
+        jQuery.ajax({
+            type: 'POST',
+            url: jQuery(this).attr('action'),
+            enctype: 'multipart/form-data',
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                jQuery('#acimage').append('<img id="imgPrime" src="' + data[0] + '" alt="Image placeholder" />');
+                jQuery("#em").append('<p id="emtn">' + data[1] + '</p>');
+                jQuery('#em1').append('<p id="emtn">' + data[2] + '</p>');
+                jQuery('#oimage').append('<img id="imgPrime" src="' + data[3] + '" alt="Image placeholder" />');
+            }
+        });
+    });
+    
+});
+
+/**
+// | |||||||| \\
+// Global Object $: Generic controls
+// | |||||||| \\
+**/
+
+(function() {
+    // http://stackoverflow.com/questions/4083351/what-does-jquery-fn-mean 
+    var $ = function(elem) {
+        if (!(this instanceof $)) {
+            return new $(elem);
+        }
+        this.el = document.getElementById(elem);
+    };
+    window.$ = $;
+    $.prototype = {
+        onChange: function(callback) {
+            this.el.addEventListener('change', callback);
+            return this;
+        }
+    };
+})();
+
+/**
+// ||||||||||  \\
+// Drag and Drop code for Upload
+// | || | || | \\
+**/
+
+var dragdrop = {
+    init: function(elem) {
+        elem.setAttribute('ondrop', 'dragdrop.drop(event)');
+        elem.setAttribute('ondragover', 'dragdrop.drag(event)');
+    },
+    drop: function(e) {
+        e.preventDefault();
+        var file = e.dataTransfer.files[0];
+        runUpload(file);
+    },
+    drag: function(e) {
+        e.preventDefault();
+    }
+};
+
+window.onload = function() {
+    if (window.FileReader) {
+        // Connect the DIV surrounding the file upload to HTML5 drag and drop calls 
+        dragdrop.init($('userActions').el);
+        // Bind the input[type="file"] to the function runUpload() 
+        $('fileUpload').onChange(function() {
+            runUpload(this.files[0]);
+        });
+    } else {
+        // Report error message if FileReader is unavilable
+        var p = document.createElement('p'),
+            msg = document.createTextNode('Sorry, your browser does not support FileReader.');
+        p.className = 'error';
+        p.appendChild(msg);
+        $('userActions').el.innerHTML = '';
+        $('userActions').el.appendChild(p);
+    }
+};
+
+</script>
+</html>
